@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -29,5 +30,39 @@ public class AccountController {
     public ResponseEntity<AccountDto> getAccountById(@PathVariable Long id) {
         AccountDto accountDto = accountService.getAccountById(id);
         return ResponseEntity.ok(accountDto);
+    }
+    //deposit rest api
+
+    @PutMapping("/{id}/deposit")
+    public ResponseEntity<AccountDto> deposit(@PathVariable Long id, @RequestBody Map<String, Double> request) {
+        Double ammount = request.get("ammount");
+        AccountDto accountDto = accountService.deposit(id, ammount);
+        return ResponseEntity.ok(accountDto);
+    }
+
+    @PutMapping("/{id}/withdraw")
+    public ResponseEntity<AccountDto> withdraw(@PathVariable Long id, @RequestBody Map<String, Double> request) {
+        Double ammount = request.get("ammount");
+        AccountDto savedAcc = accountService.withdraw(id, ammount);
+        return ResponseEntity.ok(savedAcc);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AccountDto>> getAllAccounts() {
+        List<AccountDto> allAccounts = accountService.getAllAccounts();
+        return ResponseEntity.ok(allAccounts);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<AccountDto> updateAccountName(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String newName = request.get("name");
+        AccountDto updatedAccount = accountService.updateAccountHolderName(id, newName);
+        return ResponseEntity.ok(updatedAccount);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteAccount(@PathVariable Long id) {
+        accountService.deleteAccount(id);
+        return ResponseEntity.ok("Account is deleted succesfull");
     }
 }
